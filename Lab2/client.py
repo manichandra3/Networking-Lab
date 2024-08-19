@@ -69,6 +69,6 @@ class Client:
                 self.sock.close()
 
 
-client = Client('127.0.0.1', 49153)
+client = Client('0.0.0.0', 49153)
 client.connect()
 client.run()
