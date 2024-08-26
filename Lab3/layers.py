@@ -25,7 +25,7 @@ class OSIModel:
         self.size = size
 
     def application_layer(self):
-        header = "AH|"
+        header = "AppH|"
         payload = [header, self.message]
         new_message = custom_encode(payload)
         print(f"Application Layer: {new_message}")
@@ -34,7 +34,7 @@ class OSIModel:
         self.presentation_layer()
 
     def presentation_layer(self):
-        header = "PH|"
+        header = "PrH|"
         payload = [header, self.message]
         new_message = custom_encode(payload)
         print(f"Presentation Layer: {new_message}")
@@ -43,7 +43,7 @@ class OSIModel:
         self.session_layer()
 
     def session_layer(self):
-        header = "SH|"
+        header = "SsH|"
         payload = [header, self.message]
         new_message = custom_encode(payload)
         print(f"Session Layer: {new_message}")
@@ -52,7 +52,7 @@ class OSIModel:
         self.transport_layer()
 
     def transport_layer(self):
-        header = "TH|"
+        header = "TrH|"
         payload = [header, self.message]
         new_message = custom_encode(payload)
         print(f"Transport Layer: {new_message}")
@@ -61,7 +61,7 @@ class OSIModel:
         self.network_layer()
 
     def network_layer(self):
-        header = "NH|"
+        header = "NeH|"
         payload = [header, self.message]
         new_message = custom_encode(payload)
         print(f"Network Layer: {new_message}")
@@ -70,7 +70,7 @@ class OSIModel:
         self.datalink_layer()
 
     def datalink_layer(self):
-        header = "DLH|"
+        header = "DlH|"
         payload = [header, self.message]
         new_message = custom_encode(payload)
         print(f"Data Link Layer: {new_message}")
@@ -87,6 +87,6 @@ class OSIModel:
 
 
 # Example usage:
-application_message = "MESSAGE"
+application_message = "SENTMESSAGETOME"
 model = OSIModel(application_message, len(application_message))
 model.application_layer()
