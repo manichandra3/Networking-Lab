@@ -60,9 +60,11 @@ class Client:
                     recv_message = recv_list[2]
                     if self.unique_id == dst_addr:
                         print(f"\nMessage received from {src_addr}: {recv_message}")
+                        print(f"Enter the message to send (or 'exit' to quit):")
                     else:
                         print(f"\nMessage dropped! {src_addr} does not match "
                               f"{dst_addr}")
+                        print(f"Enter the message to send (or 'exit' to quit):")
         except socket.error as e:
             print(f"Socket error while receiving: {e}", file=sys.stderr)
         finally:
