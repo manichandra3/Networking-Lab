@@ -3,16 +3,6 @@ import threading
 import time
 
 
-# RFC-3396: 1.4.1:
-#    A sender using stop-and-wait ARQ (sometimes known as 'Idle ARQ'
-#    [LIN93]) transmits a single frame and then waits for an
-#    acknowledgement from the receiver for that frame.
-#    The sender then either continues transmission with the next frame,
-#    or repeats transmission of the same frame if the acknowledgement
-#    indicates that the original frame was lost or corrupted.
-#    Stop and Wait ARQ is generally good for networks with low bandwidth-delay product(volume).
-
-
 def handle_client(client_socket):
     with open('data.txt', 'r') as file:
         sequence_number = 1

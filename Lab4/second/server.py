@@ -11,7 +11,7 @@ def byte_stuff(data):
         if data[i:i + len(FLAG)] == FLAG:
             ans += ESC + FLAG
             i += len(FLAG)
-        if data[i:i + len(FLAG)] == ESC:
+        elif data[i:i + len(ESC)] == ESC:
             ans += ESC + ESC
             i += len(ESC)
         else:
@@ -22,16 +22,22 @@ def byte_stuff(data):
 
 def byte_unstuff(stuffed_data):
     ESC = b'1101'
-    FLAG = b'01111110'
+    FLAG = b'11011110'
     ans = b''
     data = stuffed_data[len(FLAG):-len(FLAG)]
 
     i = 0
     while i < len(data):
-        if (data[i:i + len(ESC)] == ESC and data[i + len(ESC):i + len(ESC) + len(FLAG)] == FLAG
-                or data[i + len(ESC):i + len(ESC) + len(FLAG)] == ESC):
-            ans += FLAG
-            i += len(ESC) + len(FLAG)
+        if data[i:i + len(ESC)] == ESC:
+            i += len(ESC)
+            if data[i:i + len(FLAG)] == FLAG:
+                ans += FLAG
+                i += len(FLAG)
+            elif data[i:i + len(ESC)] == ESC:
+                ans += ESC
+                i += len(ESC)
+            else:
+                raise ValueError("Invalid stuffing sequence")
         else:
             ans += bytes([data[i]])
             i += 1

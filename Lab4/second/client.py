@@ -10,7 +10,7 @@ def byte_stuff(data):
         if data[i:i + len(FLAG)] == FLAG:
             ans += ESC + FLAG
             i += len(FLAG)
-        if data[i:i + len(FLAG)] == ESC:
+        elif data[i:i + len(ESC)] == ESC:
             ans += ESC + ESC
             i += len(ESC)
         else:
