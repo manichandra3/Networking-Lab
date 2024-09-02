@@ -1,6 +1,8 @@
 import socket
 import threading
 import time
+
+
 # RFC-3396: 1.4.1:
 #    A sender using stop-and-wait ARQ (sometimes known as 'Idle ARQ'
 #    [LIN93]) transmits a single frame and then waits for an
@@ -12,33 +14,37 @@ import time
 
 
 def handle_client(client_socket):
-    sequence_number = 1
-
     with open('data.txt', 'r') as file:
-        for line in file:
-            if line.startswith('#'):
-                continue
+        sequence_number = 1
 
-            frame = f"{sequence_number}:{line.strip()}"
-            client_socket.send(frame.encode('utf-8'))
-            print(f"Sent frame: {frame}")
+        for line in file:
+            frame = f"{sequence_number}:{line}"
+            if line[0] != '#':
+                client_socket.send(frame.encode('utf-8'))
+                wait_time = line[1]
+            start = time.time()
 
             while True:
                 try:
                     client_socket.settimeout(5)
                     ack = int(client_socket.recv(1024).decode('utf-8'))
-
                     if ack == sequence_number:
                         print(f"Received correct ACK: {ack}")
                         sequence_number = 1 - sequence_number
                         break
                     else:
                         print(f"Received incorrect ACK: {ack}, expected: {sequence_number}")
+                        print(f"Dropped ack: {ack}")
                 except socket.timeout:
-                    print(f"ACK not received. Resending frame: {frame}")
-                    client_socket.send(frame.encode('utf-8'))
+                    print(f"ACK not received/Frame not sent, resending frame")
+                    if line[0] != '#':
+                        client_socket.send(frame.encode('utf-8'))
+                        start = time.time()
+                    else:
+                        break
 
     client_socket.close()
+
 
 class Server:
     def __init__(self, host='0.0.0.0', port=49513):
