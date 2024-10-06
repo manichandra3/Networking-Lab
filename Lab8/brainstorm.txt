@@ -42,3 +42,9 @@ Program Outline
     After simulating all time slots:
     Print the times at which each station successfully transmitted its frame.
     Optionally, print the number of collisions encountered during the simulation.
+
+
+K: number of attempts
+Tp: max. propagation time
+Tfr: avg. transmission time
+Tb: backoff time
