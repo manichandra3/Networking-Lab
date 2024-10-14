@@ -8,13 +8,13 @@ Program Outline
         Collision Detection time: 1 slot.
 2. Data Structures
     Status for Each Station:
-        ready_to_send[]: Boolean array to track if a station is ready to send a frame.
+        ready_to_send[]: A boolean array to track if a station is ready to send a frame.
         waiting_time[]: Array to track when each station is waiting for its transmission.
         successful_transmissions[]: List to store the successful transmission times for each station.
     Network State:
         medium_busy: Boolean flag indicating if the medium is currently busy transmitting a frame.
 3. Simulation Logic
-    Initialize clock: Start from slot 0 and iterate through each time slot until reaching the total time slots.
+    Initialize a clock: Start from slot 0 and iterate through each time slot until reaching the total time slots.
 
     For each time slot:
 
