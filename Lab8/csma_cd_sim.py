@@ -1,42 +1,65 @@
+import threading
 import random
+import time
 
-SLOT_TIME = 51.2
+
+class Channel:
+    lock = threading.Lock()
+    is_busy = False
 
 
-def csma_cd_simulation(num_stations, total_slots):
-    # (0 - idle, 1 - transmitting, 2 - in backoff)
-    station_states = [0] * num_stations
-    successful_transmissions = [-1] * num_stations
+class Station(threading.Thread):
+    SLOT_TIME = 0.0000512
 
-    for slot in range(total_slots):
-        transmitting_stations = []
+    def __init__(self, id, total_slots):
+        super().__init__()
+        self.id = id
+        self.total_slots = total_slots
+        self.transmission_times = []
 
-        for station in range(num_stations):
-            if station_states[station] == 0:
-                if random.random() < 0.1:
-                    transmitting_stations.append(station)
-            elif station_states[station] == 2:
-                station_states[station] = 0
+    def run(self):
+        for slot in range(self.total_slots):
+            with Channel.lock:
+                if not Channel.is_busy:
+                    self.transmit(slot)
+                else:
+                    time.sleep(self.SLOT_TIME)
 
-        if len(transmitting_stations) == 1:
-            station = transmitting_stations[0]
-            if successful_transmissions[station] == -1:
-                successful_transmissions[station] = slot
-            station_states[station] = 1
-        elif len(transmitting_stations) > 1:
-            print(f"Collision detected at slot {slot} by stations {transmitting_stations}")
-            for station in transmitting_stations:
-                station_states[station] = 2
+    def transmit(self, slot):
+        print(f"Station {self.id} is ready to transmit at slot {slot}.")
 
-    print("\nSuccessful Transmission Times:")
-    for station, time in enumerate(successful_transmissions):
-        if time != -1:
-            print(f"Station {station + 1} successfully transmitted at slot {time}")
+        Channel.is_busy = True
+        time.sleep(self.SLOT_TIME)
+
+        if random.choice([True, False]):
+            print(f"Collision detected by Station {self.id} at slot {slot}!")
+            Channel.is_busy = False
+
+            backoff_time = random.uniform(0, self.SLOT_TIME)
+            print(f"Station {self.id} waiting for {backoff_time:.6f} seconds before retrying.")
+            time.sleep(backoff_time)
         else:
-            print(f"Station {station + 1} did not successfully transmit.")
+            print(f"Station {self.id} successfully transmitted at slot {slot}.")
+            self.transmission_times.append(slot)
+            Channel.is_busy = False
 
 
-N = int(input("Enter number of stations (N): "))
-total_time_slots = int(input("Enter total number of time slots to simulate: "))
+def main():
+    N = int(input("Enter the number of stations (N): "))
+    total_slots = int(input("Enter the total number of time slots to simulate: "))
 
-csma_cd_simulation(N, total_time_slots)
+    stations = [Station(i + 1, total_slots) for i in range(N)]
+
+    for station in stations:
+        station.start()
+
+    for station in stations:
+        station.join()
+
+    print("\nTransmission times for each station:")
+    for station in stations:
+        print(f"Station {station.id}: Transmitted at slots {station.transmission_times}")
+
+
+if __name__ == "__main__":
+    main()
